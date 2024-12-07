@@ -13,7 +13,7 @@ W pliku **mockedApi.ts** znajduje się fejkowe źródło danych i tam nie ma pot
 3. Poprawiony zostanie bug opisany poniżej.
 4. W osobnym pliku przeprowadzony zostanie dowód (w postaci kodu) który jednoznacznie pokaże poprawność działania funkcji categoryTree.
 
-> Wszystkie potrzebne paczki są już w tym repozytorium, aczkolwiek można użyć dowolnych.
+> Wszystkie potrzebne paczki są już w tym repozytorium, aczkolwiek można użyć dowolnych
 
 ## Na czym polega bug?
 
