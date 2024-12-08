@@ -7,6 +7,14 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Launch Test",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/src/tests/task.test.ts",
+      "preLaunchTask": "tsc: build - tsconfig.json"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/src/task.ts",

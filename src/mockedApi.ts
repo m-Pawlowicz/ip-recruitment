@@ -1,4 +1,4 @@
-import { INPUT } from "./input";
+import { INPUT } from './data/input';
 
 export interface Category {
   id: number;

@@ -1,4 +1,4 @@
-import { Category, getCategories } from './mockedApi';
+import sortByOrder from './sorters/sortByOrder';
 
 export interface CategoryListElement {
   name: string;
@@ -9,8 +9,29 @@ export interface CategoryListElement {
   showOnHome: boolean;
 }
 
-export const categoryTree = async (): Promise<CategoryListElement[]> => {
-  const res = await getCategories();
+type ParseData = (
+  toParse: unknown
+) => Omit<CategoryListElement, 'children' | 'showOnHome'>;
+
+type CreateTreeFrom = { hasChildren: boolean; children: CreateTreeFrom[] };
+
+type SortCategories = (
+  a: CategoryListElement,
+  b: CategoryListElement
+) => number;
+
+type CategoryTreeProps = {
+  getData: () => Promise<{ data: CreateTreeFrom[] }>;
+  parseData: ParseData;
+  sortCategories: SortCategories;
+};
+
+export const categoryTree = async ({
+  getData,
+  parseData,
+  sortCategories,
+}: CategoryTreeProps): Promise<CategoryListElement[]> => {
+  const res = await getData();
 
   if (!res.data) {
     return [];
@@ -18,59 +39,28 @@ export const categoryTree = async (): Promise<CategoryListElement[]> => {
 
   const { data } = res;
 
-  function createTree(category: Category, depth: number): CategoryListElement {
-    const parsed = parseCategory(category);
+  function recurse(
+    category: CreateTreeFrom,
+    depth: number
+  ): CategoryListElement {
+    const parsed = parseData(category);
 
     if (!category.hasChildren) {
       return { ...parsed, children: [], showOnHome: depth === 0 };
     }
 
-    const parsedSubCategories = category.children.map((x) =>
-      createTree(x, depth + 1)
-    );
-
-    parsedSubCategories.sort((a, b) => a.order - b.order);
-
-    const { image, id, name, order } = parsed;
+    const parsedSubCategories = category.children
+      .map((x) => recurse(x, depth + 1))
+      .sort(sortCategories);
 
     return {
       children: parsedSubCategories,
-      image,
       showOnHome: depth === 0,
-      id,
-      name,
-      order,
+      ...parsed,
     };
   }
 
-  const result = data.map(createTree);
-
-  console.log(JSON.stringify(result));
+  const result = data.map((category) => recurse(category, 0)).sort(sortByOrder);
 
   return result;
 };
-
-function parseCategory(
-  category: Category
-): Omit<CategoryListElement, 'children' | 'showOnHome'> {
-  const { id, MetaTagDescription, name } = category;
-
-  return {
-    id,
-    name,
-    order: getOrder(category),
-    image: MetaTagDescription,
-  };
-}
-
-function getOrder(category: Category) {
-  const matchResult = category.Title.match(/\b\d+\b/);
-
-  if (!matchResult) {
-    return category.id;
-  }
-
-  return +matchResult[0];
-}
-
-categoryTree();

@@ -1,3 +1,5 @@
+import { CategoryListElement } from '../task';
+
 export const CORRECT = [
   {
     children: [
@@ -382,4 +384,33 @@ export const CORRECT = [
     name: 'Porządki',
     order: 2,
   },
+];
+
+export const CorrectWithManyTopMostTrees: CategoryListElement[] = [
+  {
+    children: [
+      {
+        children: [],
+        id: 111,
+        image: 'whatever',
+        name: 'Jan',
+        order: 111,
+        showOnHome: false,
+      },
+      {
+        children: [],
+        id: 222,
+        image: 'whatever',
+        name: 'Jan',
+        order: 222,
+        showOnHome: false,
+      },
+    ],
+    id: 222,
+    image: 'whatever',
+    name: 'Jan',
+    order: 1,
+    showOnHome: true,
+  },
+  ...CORRECT,
 ];
